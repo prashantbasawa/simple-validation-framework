@@ -8,7 +8,7 @@ import java.util.Optional;
 
 import org.junit.Test;
 
-import com.pb.employee.Employee;
+import com.pb.usecase.Employee;
 import com.pb.validation.EmptyTextValidation;
 import com.pb.validation.ValidationResult;
 

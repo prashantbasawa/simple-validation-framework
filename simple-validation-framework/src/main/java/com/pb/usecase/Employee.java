@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.pb.employee;
+package com.pb.usecase;
 
 /**
  * @author Prashant Basawa

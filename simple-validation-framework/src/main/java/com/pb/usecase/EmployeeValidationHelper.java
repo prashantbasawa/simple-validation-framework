@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.pb.employee;
+package com.pb.usecase;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,7 +15,7 @@ import com.pb.validation.ValidationInterface;
  */
 public interface EmployeeValidationHelper {
 	
-	static Collection<ValidationInterface<Employee>> csvValidations() {
+	static Collection<ValidationInterface<Employee>> employeeValidations() {
 		Collection<ValidationInterface<Employee>> validations = new ArrayList<>();
 		
 		validations.add(firstNameNotEmpty());
