@@ -8,7 +8,7 @@ import java.util.Collection;
 import com.pb.validation.ValidationResult;
 
 /**
- * @author prashantbasawa
+ * @author Prashant Basawa
  *
  */
 public class Demo {
