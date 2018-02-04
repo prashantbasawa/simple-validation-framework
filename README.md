@@ -37,8 +37,8 @@ public interface ValidationInterface<T> {
 The result of the test will be either valid or invalid. If it is invalid then we need the reason for the failed test. So, let define the ```ValidationResult``` as an interface with these details.
 ```Java
 public interface ValidationResult {
-	boolean isValid();
-	Optional<String> getReason();
+  boolean isValid();
+  Optional<String> getReason();
 }
 ```
 As you can see, ```ValidationResult``` has two methods, ```isValid()``` to indicate if validation passed and ```getReason()``` method to give the reason. The ```getReason()``` method, returns a ```Optional``` value, since, there will be no reason if the validation succeeds.
@@ -46,54 +46,84 @@ As you can see, ```ValidationResult``` has two methods, ```isValid()``` to indic
 Now, let's add two implementations for ```ValidationResult``` to represent validness and invalidness.
 ```Java
 public interface ValidationResult {
-	boolean isValid();
-	Optional<String> getReason();
+  boolean isValid();
+  Optional<String> getReason();
 
-	static ValidationResult valid() {
-		return SingletonHelper.valid;
-	}
+  static ValidationResult valid() {
+    return SingletonHelper.valid;
+  }
 
-	static ValidationResult invalid(String reason, Object...reasonArgs) {
-		return new Invalid(reason, reasonArgs);
-	}
+  static ValidationResult invalid(String reason, Object...reasonArgs) {
+    return new Invalid(reason, reasonArgs);
+  }
 
-	public static class SingletonHelper {
-		private static final ValidationResult valid = new ValidationResult() {
-			@Override
-			public boolean isValid() { return true; }
+  public static class SingletonHelper {
+    private static final ValidationResult valid = new ValidationResult() {
+      @Override
+      public boolean isValid() { return true; }
 
-			@Override
-			public Optional<String> getReason() { return Optional.empty(); }
+      @Override
+      public Optional<String> getReason() { return Optional.empty(); }
 
-			@Override
-			public String toString() { return "Valid[]"; }
-		};
-	}
+      @Override
+      public String toString() { return "Valid[]"; }
+    };
+  }
 
-	public static class Invalid implements ValidationResult {
-		private final String reason;
+  public static class Invalid implements ValidationResult {
+    private final String reason;
 
-		private Invalid(final String reason, Object...reasonArgs) {
-			if(reason == null) { throw new IllegalArgumentException("Reason is required"); }
+    private Invalid(final String reason, Object...reasonArgs) {
+      if(reason == null) { throw new IllegalArgumentException("Reason is required"); }
 
-			this.reason = MessageFormat.format(reason, reasonArgs);
-		}
+      this.reason = MessageFormat.format(reason, reasonArgs);
+    }
 
-		@Override
-		public boolean isValid() {
-			return false;
-		}
+    @Override
+    public boolean isValid() {
+      return false;
+    }
 
-		@Override
-		public Optional<String> getReason() {
-			return Optional.of(reason);
-		}
+    @Override
+    public Optional<String> getReason() {
+      return Optional.of(reason);
+    }
 
-		@Override
-		public String toString() {
-			return "Invalid[reason=" + reason + "]";
-		}
-	}
+    @Override
+    public String toString() {
+      return "Invalid[reason=" + reason + "]";
+    }
+  }
 }
 ```
 Since, validness doesn't have any other state apart from being valid, it can be represented by a singleton class. The ```SingletonHelper``` is helping in creating this singleton instance for us. The class ```Invalid``` represents invalidness and has reason attribute. The constructor of class  ```Invalid``` also takes an object array to present the placeholders in the reason message to facilitate dynamic messages. Finally, we have two factory methods ```valid()``` and ```invalid()``` to return the instances of the implementation classes.
+
+Now, let's create an implementation for our ```ValidationInterface``` class. The responsibility of this class will be to accept & hold any given predicate, and test it on the java object.
+```Java
+public class Validation<T> implements ValidationInterface<T> {
+  private final Predicate<T> predicate;
+  private final String failureReason;
+  private final Function<T, ?>[] failureReasonArgFns;
+
+  @SafeVarargs
+  public Validation(final Predicate<T> predicate, final String failureReason, final Function<T, ?>...failureReasonArgFns) {
+    this.predicate = predicate;
+    this.failureReason = failureReason;
+    this.failureReasonArgFns = failureReasonArgFns;
+  }
+
+  @Override
+  public final ValidationResult test(T domain) {
+    return predicate.test(domain) ? ValidationResult.valid(): ValidationResult.invalid(failureReason, failureReasonArgs(domain));
+  }
+
+  private Object[] failureReasonArgs(T domain) {
+    if(failureReasonArgFns == null) { return null; }
+
+    return Arrays.stream(this.failureReasonArgFns)
+            .map(fn -> fn.apply(domain))
+            .collect(toList())
+            .toArray();
+    }
+}
+```
