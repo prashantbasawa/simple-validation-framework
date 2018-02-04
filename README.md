@@ -36,7 +36,7 @@ public interface ValidationInterface<T> {
 }
 ```
 ## Step - 2
-The result of the test will be either valid or invalid. If it is invalid then we need the reason for the failed test. So, let define the ```ValidationResult``` as an interface with these details.
+The result of the test will be either valid or invalid. If it is invalid then we need the reason for the failed test. So, let's define the ```ValidationResult``` as an interface with these details.
 ```Java
 public interface ValidationResult {
     boolean isValid();
@@ -101,7 +101,7 @@ public interface ValidationResult {
 Since, validness doesn't have any other state apart from being valid, it can be represented by a singleton class. The ```SingletonHelper``` is helping in creating this singleton instance for us. The class ```Invalid``` represents invalidness and has reason attribute. The constructor of class  ```Invalid``` also takes an object array to present the placeholders in the reason message to facilitate dynamic messages. Finally, we have two factory methods ```valid()``` and ```invalid()``` to return the instances of the implementation classes.
 
 ## Step - 3
-Now, let's create an implementation for our ```ValidationInterface``` class. The responsibility of this class will be to accept & hold any given predicate, and test it on the java object.
+Now, let's create an implementation class for our ```ValidationInterface```. The responsibility of this class will be to accept & hold any given predicate, and test it on the java object.
 ```Java
 public class Validation<T> implements ValidationInterface<T> {
     private final Predicate<T> predicate;
@@ -129,4 +129,25 @@ public class Validation<T> implements ValidationInterface<T> {
               .toArray();
       }
 }
+```
+The implementation class ```Validation``` is defined with a generic type. It has ```Predicate``` to represent the condition/predicate of the test. It has ```failureReason``` to give out, in case, test fails. Finally, it has an array of ```Function```s to get the placeholder values from the object/validatee itself. These placeholder values are then used to fill in the failureReason to create a dynamic message.
+## Step - 4
+Now, how do we use this framework ? Let's assume we have a class ```Employee``` and we want to validate it.
+```Java
+public class Employee {
+    private String firstName;
+    private String lastName;
+
+    public String getFirstName();
+    public void setFirstName();
+    public String getLastName();
+    public void setLastName();
+}
+```
+We want to validate ```firstName``` for emptiness, since it's a required field. We have to define a validation that represents it.
+```Java
+Employee employee = new Employee();
+
+Validation<Employee> firstNameNotEmpty = new Validation<>(e -> !e.empty(), "Firstname is Required");
+ValidationResult result = firstNameNotEmpty.test(employee);
 ```
