@@ -12,7 +12,6 @@ import com.pb.validation.ValidationResult;
  *
  */
 public class Demo {
-
 	/**
 	 * @param args
 	 */
