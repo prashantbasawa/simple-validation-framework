@@ -1,9 +1,10 @@
 # Simple Domain Validation Framework Using Java 8
 Simple ? Yes, it is. There are cases, you will want to have a simple validation framework to validate your java objects and where bringing a third party library is a overkill. You can use this design in those situations.
 
-#### What is a validation ?
+## What is a validation ?
 >A validation is really a predicate/condition that is when tested on a object, if it succeeds, then object is considered to have passed, otherwise, it is considered failed. If it failed, then we need to know why it failed, so that we can correct it.
 
+## Step - 1
 To start with, let's define an interface, which represents a validation contract.
 
 ```Java
@@ -34,6 +35,7 @@ public interface ValidationInterface<T> {
     }
 }
 ```
+## Step - 2
 The result of the test will be either valid or invalid. If it is invalid then we need the reason for the failed test. So, let define the ```ValidationResult``` as an interface with these details.
 ```Java
 public interface ValidationResult {
@@ -98,6 +100,7 @@ public interface ValidationResult {
 ```
 Since, validness doesn't have any other state apart from being valid, it can be represented by a singleton class. The ```SingletonHelper``` is helping in creating this singleton instance for us. The class ```Invalid``` represents invalidness and has reason attribute. The constructor of class  ```Invalid``` also takes an object array to present the placeholders in the reason message to facilitate dynamic messages. Finally, we have two factory methods ```valid()``` and ```invalid()``` to return the instances of the implementation classes.
 
+## Step - 3
 Now, let's create an implementation for our ```ValidationInterface``` class. The responsibility of this class will be to accept & hold any given predicate, and test it on the java object.
 ```Java
 public class Validation<T> implements ValidationInterface<T> {
