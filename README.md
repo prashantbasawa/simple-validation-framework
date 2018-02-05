@@ -157,3 +157,19 @@ ValidationInterface<Employee> zipCode5CharsLong = new Validation<>(
     "Zip code should be 5 characters long"
 );
 ```
+Now, what if, we want to check length only after, we verified the ```zipCode``` was indeed entered and not empty. That's when logical ANDing capability comes handy. We can create new validation combining both the previous validations like this.
+```Java
+ValidationInterface<Employee> zipCodeNotEmptyAnd5charsLong = zipCodeNotEmpty.and(zipCode5CharsLong);
+```
+## Finally
+Since, emptiness, length, numeric validations etc., are so common that having to create these validations with same predicate over and over again for every field is too much. It will be nice if we have concrete implementations for these, given the type of object and the accessor methods to call on that object. Since, Java 8, we can now pass ```Function```s as arguments, it's quite possible.
+### EmptyTextValidation
+```Java
+public class EmptyTextValidation<T> extends Validation<T> {
+    //
+    public EmptyTextValidation(Function<T, String> getterFn, String fieldName) {
+      super(domain -> isNotBlank(getterFn.apply(domain)), "{0} is required", d -> fieldName);
+    }
+}
+```
+As you can see the predicate and reason messages are now encapsulated in this new class.
