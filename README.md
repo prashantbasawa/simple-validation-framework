@@ -162,8 +162,8 @@ Now, what if, we want to check length only after, we verified the ```zipCode``` 
 ValidationInterface<Employee> zipCodeNotEmptyAnd5charsLong = zipCodeNotEmpty.and(zipCode5CharsLong);
 ```
 ## Finally
-Since, emptiness, length, numeric validations etc., are so common that having to create these validations with same predicate over and over again for every field is too much. It will be nice if we have concrete implementations for these, given the type of object and the accessor methods to call on that object. Since, Java 8, we can now pass ```Function```s as arguments, it's quite possible.
-### EmptyTextValidation
+Since, emptiness, length, numeric validations etc., are so common that having to create these validations with same predicate over and over again for every field is too much. It will be nice if we have concrete implementations for these, given the type of object and the accessor methods to call on that object. Since, in Java 8, we can now pass ```Function```s as arguments, it's quite possible.
+### 1. EmptyTextValidation
 ```Java
 public class EmptyTextValidation<T> extends Validation<T> {
     //
@@ -175,6 +175,19 @@ public class EmptyTextValidation<T> extends Validation<T> {
 As you can see the predicate and reason template are now encapsulated in this new class. The constructor of the class takes a getter function to be invoked to get the value from domain object for validation. It also takes field name as the second argument. You can use this class as below.
 ```Java
 ValidationInterface<Employee> zipCodeNotEmpty =
-            new EmptyTextValidation<>(Employee::getZipCode, "Zip code");
+                    new EmptyTextValidation<>(Employee::getZipCode, "Zip code");
 
 ```
+### 2. NumericTextValidation
+Like empty validation, numeric text validation is also used too often. Hence, it's good to have a concrete implementation for this too.
+```Java
+public class NumericTextValidation<T> extends Validation<T> {
+    //
+    private static Pattern numericPattern = Pattern.compile("\\d+");
+
+    public NumericTextValidation(Function<T, String> getterFn, String fieldName) {
+      super(domain -> numericPattern.matcher(getterFn.apply(domain)).matches(), "{0} should be numeric. [suppliedValue={1}]", d -> fieldName, getterFn);
+    }
+}
+```
+Similarly, you can have concrete implementations for exact text length, minimum text length, maximum text length etc., validations which you can reuse. I have created them in my package ```com.pb.validation```, have a look in there. Also, look at the ```com.pb.usecase``` package to see how we can arrange these validations and call on a object, especially, see ```EmployeeValidationHelper``` and ```Demo``` classes.
