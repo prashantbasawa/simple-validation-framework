@@ -135,14 +135,25 @@ The implementation class ```Validation``` is defined with a generic type. It has
 Now, how do we use this framework ? Let's assume we have a class ```Employee``` and we want to validate it.
 ```Java
 public class Employee {
-    private String firstName;   
+    private String firstName;
+    private String zipCode;   
     //Assume getters & setters below.
 }
 ```
-We want to validate ```firstName``` for emptiness, since, it's a required field. We have to define a validation that represents it.
+We want to validate ```zipCode``` for emptiness, since, it's a required field. We have to define a validation that represents it.
 ```Java
-Validation<Employee> firstNameNotEmpty = new Validation<>(e -> (e.getFirstName() != null && !e.getFirstName().isEmpty()), "First name is required");
+ValidationInterface<Employee> zipCodeNotEmpty = new Validation<>(
+    e -> (e.getZipCode() != null && !e.getZipCode().isEmpty()),
+    "Zip code is required"
+);
 
 Employee employee = new Employee();
-ValidationResult result = firstNameNotEmpty.test(employee);
+ValidationResult result = zipCodeNotEmpty.test(employee);
+```
+Let's see another example. Consider, we want to validate ```zipCode``` field for its length. In US, ```zipCode``` should be 5 characters long. We can do something like this.
+```Java
+ValidationInterface<Employee> zipCode5CharsLong = new Validation<>(
+    e -> e.getZipCode().length() == 5,
+    "Zip code should be 5 characters long"
+);
 ```
