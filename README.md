@@ -172,4 +172,9 @@ public class EmptyTextValidation<T> extends Validation<T> {
     }
 }
 ```
-As you can see the predicate and reason messages are now encapsulated in this new class.
+As you can see the predicate and reason template are now encapsulated in this new class. The constructor of the class takes a getter function to be invoked to get the value from domain object for validation. It also takes field name as the second argument. You can use this class as below.
+```Java
+ValidationInterface<Employee> zipCodeNotEmpty =
+            new EmptyTextValidation<>(Employee::getZipCode, "Zip code");
+
+```
