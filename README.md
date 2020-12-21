@@ -1,4 +1,4 @@
-# Simple Domain Validation Framework Using Java 8
+# Simple Domain Validation Framework Using Java 8+
 Simple ? Yes, it is. There are cases, you will want to have a simple validation framework to validate your java objects and where bringing a third party library is a overkill. You can use this design in those situations.
 
 ## What is a validation ?
