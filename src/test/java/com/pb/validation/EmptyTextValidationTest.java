@@ -1,16 +1,9 @@
 package com.pb.validation;
 
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNot.not;
-import static org.junit.Assert.assertThat;
-
-import java.util.Optional;
-
-import org.junit.Test;
-
 import com.pb.usecase.Employee;
-import com.pb.validation.EmptyTextValidation;
-import com.pb.validation.ValidationResult;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class EmptyTextValidationTest {
 
@@ -18,15 +11,15 @@ public class EmptyTextValidationTest {
 	public void invalidcase_isValidCheck() {
 		ValidationResult result = new EmptyTextValidation<>(Employee::getFirstName, "First name").test(new Employee());
 		
-		assertThat(result.isValid(), is(false));
+		assertThat(result.isValid()).isFalse();
 	}
 	
 	@Test
 	public void invalidcase_reasonCheck() {
 		ValidationResult result = new EmptyTextValidation<>(Employee::getFirstName, "First name").test(new Employee());
 		
-		assertThat(result.getReason(), not(Optional.empty()));
-		assertThat(result.getReason().get(), is("First name is required"));
+		assertThat(result.getReason()).isNotEmpty();
+		assertThat(result.getReason().get()).isEqualTo("First name is required");
 	}
 
 	@Test
@@ -36,7 +29,7 @@ public class EmptyTextValidationTest {
 		
 		ValidationResult result = new EmptyTextValidation<>(Employee::getFirstName, "First name").test(employee);
 		
-		assertThat(result.isValid(), is(true));
+		assertThat(result.isValid()).isTrue();
 	}
 	
 	@Test
@@ -46,6 +39,6 @@ public class EmptyTextValidationTest {
 		
 		ValidationResult result = new EmptyTextValidation<>(Employee::getFirstName, "First name").test(employee);
 		
-		assertThat(result.getReason(), is(Optional.empty()));
+		assertThat(result.getReason()).isEmpty();
 	}
 }
